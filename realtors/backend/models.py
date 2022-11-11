@@ -269,17 +269,3 @@ class Location(models.Model):
 
     def __str__(self):
         return self.location_name
-
-# class Photo(models.Model):
-#     id = models.AutoField(primary_key=True)
-#     models.ImageField(upload_to='uploads/', blank=True, null=True)
-#     building_id = models.ForeignKey("Building", on_delete=models.CASCADE, null=True)
-#     room_id = models.ForeignKey("Room", on_delete=models.CASCADE, null=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-
-#     class Meta:
-#         ordering = ['id']
-
-#     def __str__(self):
-#         return self.user.username
