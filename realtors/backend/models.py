@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class CustomAccountManager(BaseUserManager):
-    def create_superuser(self, user_name, email, first_name, last_name, phone, password, **other_fields):
+    def create_superuser(self,email,  user_name, first_name, last_name, phone, password, **other_fields):
 
         other_fields.setdefault('is_staff', True)
         other_fields.setdefault('is_superuser', True)
@@ -24,10 +24,10 @@ class CustomAccountManager(BaseUserManager):
         return self.create_user(email=email, user_name=user_name, first_name=first_name, last_name=last_name,
                                      phone=phone, password=password, **other_fields)
 
-    def create_user(self, user_name, email, first_name, last_name, phone, password, **other_fields):
+    def create_user(self, email, user_name, first_name, last_name, phone, password, **other_fields):
 
         if not email:
-            return TypeError(_('Please provide an email address'))
+            raise ValueError(_('You must provide an email address'))
 
         email = self.normalize_email(email)
         user = self.model(email=email, user_name=user_name, first_name=first_name, last_name=last_name, phone=phone,

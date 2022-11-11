@@ -9,14 +9,13 @@ class UserAccountTests(TestCase):
 
     def test_new_superuser(self):
         db = get_user_model()
-        super_user  = db.objects.create_superuser('testuser@super.com', 'username', 'firstname', 'lastname', 'phone','password')
+        super_user = db.objects.create_superuser('test@mail.com', 'username','firstname','lastname','phone','password')
 
-        self.assertEqual(super_user.email, 'testuser@super.com')
+        self.assertEqual(super_user.email, 'test@mail.com')
         self.assertEqual(super_user.user_name, 'username')
         self.assertEqual(super_user.first_name, 'firstname')
         self.assertEqual(super_user.last_name, 'lastname')
         self.assertEqual(super_user.phone, 'phone')
-        self.assertEqual(super_user.password, 'password')
 
         self.assertTrue(super_user.is_superuser)
         self.assertTrue(super_user.is_staff)
@@ -26,7 +25,7 @@ class UserAccountTests(TestCase):
 
         with self.assertRaises(ValueError):
             db.objects.create_superuser(
-                email='test@super.com',
+                email='test@mail.com',
                 user_name='username',
                 first_name='firstname',
                 last_name='lastname',
@@ -36,10 +35,32 @@ class UserAccountTests(TestCase):
 
         with self.assertRaises(ValueError):
             db.objects.create_superuser(
-                email='test@super.com',
+                email='test@mail.com',
                 user_name='username',
                 first_name='firstname',
                 last_name='lastname',
                 phone='0700222333',
                 password='password',
                 is_staff=False)
+
+        with self.assertRaises(ValueError):
+            db.objects.create_superuser(
+                email='', user_name='username', first_name='first_name', last_name='last_name', password='password', phone='phone',is_superuser=True)
+
+
+    def test_new_user(self):
+        db = get_user_model()
+        user = db.objects.create_user(
+            'testuser@user.com', 'username', 'firstname', 'lastname','phone','password')
+        self.assertEqual(user.email, 'testuser@user.com')
+        self.assertEqual(user.user_name, 'username')
+        self.assertEqual(user.first_name, 'firstname')
+        self.assertEqual(user.last_name, 'lastname')
+        self.assertEqual(user.phone, 'phone')
+        self.assertFalse(user.is_superuser)
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_active)
+
+        with self.assertRaises(ValueError):
+            db.objects.create_user(
+                email='', user_name='a', first_name='first_name',last_name = 'last_name', phone='phone',password='password')
