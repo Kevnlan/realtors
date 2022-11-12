@@ -5,6 +5,7 @@ from io import BytesIO
 from PIL import Image
 from django.core.files import File
 from django.utils.translation import gettext_lazy as _
+from django.utils.text import slugify 
 
 
 class CustomAccountManager(BaseUserManager):
@@ -109,13 +110,17 @@ class Property(models.Model):
     name = models.CharField(max_length=100)
     no_of_buildings = models.IntegerField(default=1)
     property_type = models.CharField(max_length=100)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True,blank=True, null=True)
     user_id = models.ForeignKey("Users", on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['id']
+    
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Property, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -156,11 +161,12 @@ class Property(models.Model):
 
 class Building(models.Model):
     id = models.AutoField(primary_key=True)
-    no_of_units = models.IntegerField(default=1)
-    rent = models.IntegerField(default=1)
+    name = models.CharField(max_length=100)
+    no_of_units = models.IntegerField()
+    rent = models.IntegerField()
     amenities = models.CharField(max_length=100)
     image = models.ImageField(upload_to='uploads/', blank=True, null=True)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True,blank=True, null=True)
     property_id = models.ForeignKey("Property", on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -168,8 +174,12 @@ class Building(models.Model):
     class Meta:
         ordering = ['id']
 
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name + str(self.property_id))
+        super(Building, self).save(*args, **kwargs)
+
     def __str__(self):
-        return self.id
+        return self.name
 
     def get_absolute_url(self):
         return f'/{self.category.slug}/{self.slug}/'
@@ -208,7 +218,7 @@ class Room(models.Model):
     id = models.AutoField(primary_key=True)
     image = models.ImageField(upload_to='uploads/', blank=True, null=True)
     room_size = models.CharField(max_length=100)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True,blank=True, null=True)
     building_id = models.ForeignKey("Building", on_delete=models.CASCADE, null=True)
     user_id = models.ForeignKey("Users", on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -217,8 +227,12 @@ class Room(models.Model):
     class Meta:
         ordering = ['id']
 
+    def save(self, *args, **kwargs):
+        self.slug = slugify(str(self.id) + str(self.building_id))
+        super(Room, self).save(*args, **kwargs)
+
     def __str__(self):
-        return self.id
+        return str(self.id)
 
     def get_absolute_url(self):
         return f'/{self.category.slug}/{self.slug}/'
@@ -259,13 +273,18 @@ class Location(models.Model):
     location_name = models.CharField(max_length=100)
     latitude = models.CharField(max_length=100)
     longitude = models.CharField(max_length=100)
-    slug = models.SlugField()
+    plus_codes = models.CharField(max_length=20)
+    slug = models.SlugField(unique=True,blank=True, null=True)
     property_id = models.ForeignKey("Property", on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['id']
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(str(self.id )+ self.location_name)
+        super(Location, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.location_name
