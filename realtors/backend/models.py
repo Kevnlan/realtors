@@ -7,6 +7,11 @@ from django.core.files import File
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify 
 
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
+
 
 class CustomAccountManager(BaseUserManager):
     def create_superuser(self,email,  user_name, first_name, last_name, phone, password, **other_fields):
@@ -130,18 +135,18 @@ class Property(models.Model):
 
     def get_image(self):
         if self.image:
-            return 'http://127.0.0.1:8000' + self.image.url
+            return env('local_host_link') + self.image.url
         return ''
 
     def get_thumbnail(self):
         if self.thumbnail:
-            return 'http://127.0.0.1:8000' + self.thumbnail.url
+            return env('local_host_link') + self.thumbnail.url
         else:
             if self.image:
                 self.thumbnail = self.make_thumbnail(self.image)
                 self.save()
 
-                return 'http://127.0.0.1:8000' + self.thumbnail.url
+                return env('local_host_link') + self.thumbnail.url
             else:
                 return ''
 
@@ -186,18 +191,18 @@ class Building(models.Model):
 
     def get_image(self):
         if self.image:
-            return 'http://127.0.0.1:8000' + self.image.url
+            return env('local_host_link') + self.image.url
         return ''
 
     def get_thumbnail(self):
         if self.thumbnail:
-            return 'http://127.0.0.1:8000' + self.thumbnail.url
+            return env('local_host_link') + self.thumbnail.url
         else:
             if self.image:
                 self.thumbnail = self.make_thumbnail(self.image)
                 self.save()
 
-                return 'http://127.0.0.1:8000' + self.thumbnail.url
+                return env('local_host_link') + self.thumbnail.url
             else:
                 return ''
 
@@ -239,18 +244,18 @@ class Room(models.Model):
 
     def get_image(self):
         if self.image:
-            return 'http://127.0.0.1:8000' + self.image.url
+            return env('local_host_link') + self.image.url
         return ''
 
     def get_thumbnail(self):
         if self.thumbnail:
-            return 'http://127.0.0.1:8000' + self.thumbnail.url
+            return env('local_host_link') + self.thumbnail.url
         else:
             if self.image:
                 self.thumbnail = self.make_thumbnail(self.image)
                 self.save()
 
-                return 'http://127.0.0.1:8000' + self.thumbnail.url
+                return env('local_host_link') + self.thumbnail.url
             else:
                 return ''
 
