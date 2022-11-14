@@ -17,7 +17,7 @@ A brief description of what this project does and who it's for
 0pen terminal and type
 
 ```bash
-https://github.com/Kevnlan/realtors.git
+git clone https://github.com/Kevnlan/realtors.git
 ```
 ### Install Requirements
 ```
